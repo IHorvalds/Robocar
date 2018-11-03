@@ -1,0 +1,5 @@
+Wire colour codes:
+-Red: power
+-Yellow: inputs to the Raspberry
+-Blue: outputs from the Raspberry
+-Black: ground
