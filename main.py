@@ -10,6 +10,8 @@ from Controls.right         import turnRight
 
 import RPi.GPIO as GPIO
 import time     as t
+import sys
+import bluetooth
 
 ### Sensors
 light1              = 23
@@ -32,11 +34,11 @@ GPIO.setmode(BCM)
 GPIO.setwarnings(False)
 
 ### Sensor Setup
-GPIO.setup(light1,              GPIO.OUT)
-GPIO.setup(light2,              GPIO.OUT)
-GPIO.setup(light3,              GPIO.OUT)
-GPIO.setup(light4,              GPIO.OUT)
-GPIO.setup(sonicSensorTrigger,  GPIO.OUT)
+GPIO.setup(light1,              GPIO.IN)
+GPIO.setup(light2,              GPIO.IN)
+GPIO.setup(light3,              GPIO.IN)
+GPIO.setup(light4,              GPIO.IN)
+GPIO.setup(sonicSensorTrigger,  GPIO.IN)
 GPIO.setup(echoPin,             GPIO.IN)
 
 ### Motor Setup
@@ -47,6 +49,12 @@ GPIO.setup(ain1,        GPIO.OUT)
 GPIO.setup(ain2,        GPIO.OUT)
 GPIO.setup(bin1,        GPIO.OUT)
 GPIO.setup(bin2,        GPIO.OUT)
+
+rightOut = GPIO.PWM(pwmRight, 100) ### 100Hz
+leftOut  = GPIO.PWM(pwmLeft, 100) ### 100Hz
+
+motorRight = (ain1, ain2)
+motorLeft = (bin1, bin2)
 
 
 ############################### DEFINE LINE FOLLOWING LOGIC ################################
@@ -63,3 +71,39 @@ GPIO.setup(bin2,        GPIO.OUT)
 ### GO RIGHT
 ### l1 l2 l3 l4
 ###  1  1  ?  0
+
+def lineFollowing():
+    try:
+        rightOut.start(0)
+        leftOut.start(0)
+        speed = 100
+        moveForward(motorRight, rightOut, GPIO, speed)
+        moveForward(motorLeft, leftOut, GPIO, speed)
+        while True:
+                l1 = readLightSensor(light1, GPIO)
+                l2 = readLightSensor(light2, GPIO)
+                l3 = readLightSensor(light3, GPIO)
+                l4 = readLightSensor(light4, GPIO)
+                if (l3, l4) == (1, 1) and l1 == 0:
+                    turnLeft(leftOut, 10) ### this will turn harder and harder until it recognises something as a straight line
+                if (l1, l2) == (1, 1) and l4 == 0:
+                    turnRight(rightOut, 10)
+                if (l1, l4) == (1, 1) and (l1, l4) == (0, 0):
+                    """
+                    Mind you, this might not be aligned to the actual line,
+                    but alignment will be accomplished by the turning functions
+                    """
+                    moveForward(motorRight, rightOut, GPIO, speed)
+                    moveForward(motorLeft, leftOut, GPIO, speed)
+    except Exception as exc:
+        print(exc)
+        stop(motorLeft, leftOut, GPIO)
+        stop(motorRight, rightOut, GPIO)
+        sys.exit(0)
+
+def bluetoothControl():
+    serverSocket = bluetooth.BlueToothSocket(bluetooth.RFCOMM)
+    port = 12
+    serverSocket.bind(("", port))
+    serverSocket.listen(2) ## read from 2 incoming connections
+    ### ERGO, multithread this
