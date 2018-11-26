@@ -11,7 +11,7 @@ from Controls.right         import turnRight
 import RPi.GPIO as GPIO
 import time     as t
 import sys
-import bluetooth
+#import bluetooth
 
 ### Sensors
 light1              = 23
@@ -30,7 +30,7 @@ bin1        = 27
 bin2        = 22
 
 ### Setup. Lots of typing for clarity
-GPIO.setmode(BCM)
+GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 ### Sensor Setup
@@ -50,11 +50,11 @@ GPIO.setup(ain2,        GPIO.OUT)
 GPIO.setup(bin1,        GPIO.OUT)
 GPIO.setup(bin2,        GPIO.OUT)
 
-rightOut = GPIO.PWM(pwmRight, 100) ### 100Hz
-leftOut  = GPIO.PWM(pwmLeft, 100) ### 100Hz
+rightOut = GPIO.PWM(pwmRight, 50) ### 100Hz
+leftOut  = GPIO.PWM(pwmLeft, 50) ### 100Hz
 
-motorRight = (ain1, ain2)
-motorLeft = (bin1, bin2)
+motorRight = (ain2, ain1)
+motorLeft = (bin2, bin1)
 
 
 ############################### DEFINE LINE FOLLOWING LOGIC ################################
@@ -76,34 +76,46 @@ def lineFollowing():
     try:
         rightOut.start(0)
         leftOut.start(0)
-        speed = 100
-        moveForward(motorRight, rightOut, GPIO, speed)
-        moveForward(motorLeft, leftOut, GPIO, speed)
+        speed = 60
+        #moveForward(motorRight, rightOut, GPIO, speed)
+        #moveForward(motorLeft, leftOut, GPIO, speed)
+        print("Start moving forward")
         while True:
                 l1 = readLightSensor(light1, GPIO)
                 l2 = readLightSensor(light2, GPIO)
                 l3 = readLightSensor(light3, GPIO)
                 l4 = readLightSensor(light4, GPIO)
-                if (l3, l4) == (1, 1) and l1 == 0:
-                    turnLeft(leftOut, 10) ### this will turn harder and harder until it recognises something as a straight line
-                if (l1, l2) == (1, 1) and l4 == 0:
-                    turnRight(rightOut, 10)
-                if (l1, l4) == (1, 1) and (l1, l4) == (0, 0):
-                    """
-                    Mind you, this might not be aligned to the actual line,
-                    but alignment will be accomplished by the turning functions
-                    """
+                if l2 == 1 and l1 == 0:
+                    turnRight(rightOut, 60) ### this will turn harder and harder until it recognises something as a straight line
+                    print("Turn right")
+                #    moveForward(motorRight, rightOut, GPIO, speed)
+                if l4 == 0 and l3 == 1:
+                    turnLeft(leftOut, 60)
+                    print("Turn left")
+                #    moveForward(motorLeft, leftOut, GPIO, speed)
+                if l1 == 1 and l2 == 1 and l3 == 1 and l4 == 1:
                     moveForward(motorRight, rightOut, GPIO, speed)
                     moveForward(motorLeft, leftOut, GPIO, speed)
+                if l1 == 0 and l4 == 0 and l2 == 1 and l3 == 1:
+                #    """
+                #    Mind you, this might not be aligned to the actual line,
+                #    but alignment will be accomplished by the turning functions
+                #    """
+                    moveForward(motorRight, rightOut, GPIO, speed)
+                    moveForward(motorLeft, leftOut, GPIO, speed)
+                    print("Forward")
+                #print("Idk wtf is going on")
     except Exception as exc:
         print(exc)
         stop(motorLeft, leftOut, GPIO)
         stop(motorRight, rightOut, GPIO)
         sys.exit(0)
 
-def bluetoothControl():
-    serverSocket = bluetooth.BlueToothSocket(bluetooth.RFCOMM)
-    port = 12
-    serverSocket.bind(("", port))
-    serverSocket.listen(2) ## read from 2 incoming connections
-    ### ERGO, multithread this
+#def bluetoothControl():
+#    serverSocket = bluetooth.BlueToothSocket(bluetooth.RFCOMM)
+#    port = 12
+#    serverSocket.bind(("", port))
+#    serverSocket.listen(2) ## read from 2 incoming connections
+#    ### ERGO, multithread this
+
+lineFollowing()
