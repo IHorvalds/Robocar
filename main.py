@@ -18,7 +18,7 @@ light1              = 23
 light2              = 24
 light3              = 25
 light4              = 7
-sonicSensorTrigger  = 13
+sonicSensorTrigger  = 26
 echoPin             = 19
 
 ### Motors
@@ -38,7 +38,7 @@ GPIO.setup(light1,              GPIO.IN)
 GPIO.setup(light2,              GPIO.IN)
 GPIO.setup(light3,              GPIO.IN)
 GPIO.setup(light4,              GPIO.IN)
-GPIO.setup(sonicSensorTrigger,  GPIO.IN)
+GPIO.setup(sonicSensorTrigger,  GPIO.OUT)
 GPIO.setup(echoPin,             GPIO.IN)
 
 ### Motor Setup
@@ -50,8 +50,8 @@ GPIO.setup(ain2,        GPIO.OUT)
 GPIO.setup(bin1,        GPIO.OUT)
 GPIO.setup(bin2,        GPIO.OUT)
 
-rightOut = GPIO.PWM(pwmRight, 50) ### 100Hz
-leftOut  = GPIO.PWM(pwmLeft, 50) ### 100Hz
+rightOut = GPIO.PWM(pwmRight, 100) ### 100Hz
+leftOut  = GPIO.PWM(pwmLeft, 100) ### 100Hz
 
 motorRight = (ain2, ain1)
 motorLeft = (bin2, bin1)
@@ -111,6 +111,47 @@ def lineFollowing():
         stop(motorRight, rightOut, GPIO)
         sys.exit(0)
 
+
+def takeOut():
+        try:
+            rightOut.start(0)
+            leftOut.start(0)
+            speed = 60
+            while True:
+                l1 = readLightSensor(light1, GPIO)
+                l2 = readLightSensor(light2, GPIO)
+                l3 = readLightSensor(light3, GPIO)
+                l4 = readLightSensor(light4, GPIO)
+                #moveForward(motorRight, rightOut, GPIO, speed)
+                #moveBackward(motorLeft, leftOut, GPIO, speed)
+                print(readSonicSensor(sonicSensorTrigger, echoPin, GPIO))
+                if (l1, l4) == (0, 0): ## or whatever the value of white was
+                    if readSonicSensor(sonicSensorTrigger, echoPin, GPIO) < 100.0: ###or whatever the radius/longest possible distance was
+                        # moveForward(motorLeft, leftOut, GPIO, speed)
+                        # moveBackward(motorRight, rightOut, GPIO, speed)
+                        # t.sleep(0.001)
+                        stop(motorRight, rightOut, GPIO)
+                        stop(motorLeft, leftOut, GPIO)
+                        t.sleep(0.3)
+                        moveForward(motorRight, rightOut, GPIO, speed)
+                        moveForward(motorLeft, leftOut, GPIO, speed)
+                    else:
+                        moveBackward(motorRight, rightOut, GPIO, speed)
+                        moveForward(motorLeft, leftOut, GPIO, speed)
+                else:
+                    moveBackward(motorRight, rightOut, GPIO, speed)
+                    moveBackward(motorLeft, leftOut, GPIO, speed)
+                    t.sleep(0.2)
+                    moveForward(motorLeft, leftOut, GPIO, speed)
+                    t.sleep(0.1)
+        except Exception as exc:
+            print(exc)
+            stop(motorRight, rightOut, GPIO)
+            stop(motorLeft, leftOut, GPIO)
+            GPIO.cleanup()
+            sys.exit(0)
+
+
 #def bluetoothControl():
 #    serverSocket = bluetooth.BlueToothSocket(bluetooth.RFCOMM)
 #    port = 12
@@ -118,4 +159,5 @@ def lineFollowing():
 #    serverSocket.listen(2) ## read from 2 incoming connections
 #    ### ERGO, multithread this
 
-lineFollowing()
+#lineFollowing()
+takeOut()
