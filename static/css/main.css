@@ -1,0 +1,131 @@
+.v-content__wrap {
+    overflow: hidden;
+}
+
+/* buttons */
+.button {
+    background-color: #D7CACA;
+    padding: 0.8rem 1.2rem;
+    transition: box-shadow 0.1s;
+    transition: color 0.1s;
+}
+
+.button:hover {
+    cursor: pointer;
+    color: #FFFFFF
+}
+
+.button_active {
+    box-shadow: 10px 10px #82b1ff;
+}
+
+/* control */
+.middle_box {
+    width: 215px;
+    height: 215px;
+    padding: 5px;
+    position: absolute;
+    left: 0; 
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    /* transition: transform .05s; */
+    transform-origin: center center;
+    transform: rotate(45deg);
+
+}
+
+.sitting {
+    transform-origin: center center;
+    transform: rotate(90deg);
+}
+
+.sub_box {
+    height: 100px;
+    width: 100px;
+}
+
+.first_box, .third_box {
+    float: left;
+}
+
+.second_box, .fourth_box {
+    float: right;
+}
+
+.first_box, .second_box {
+    margin-bottom: 5px;
+}
+
+.sub_box > svg {
+    height: 100px;
+    width: 100px;
+    color: #D7CACA;
+    transition: color 0.3s;
+}
+
+.active_dir > svg {
+    color: #82b1ff
+}
+
+.first_box > svg{
+    transform: rotate(-45deg)
+}
+
+.second_box > svg{
+    transform: rotate(45deg)
+}
+
+.third_box > svg{
+    transform: rotate(-135deg)
+}
+
+.fourth_box > svg{
+    transform: rotate(135deg)
+}
+
+/* follow the line */
+.lineFollow {
+    height: 300px
+}
+
+.lineButton {
+    background-color: #D7CACA;
+    padding: 0.8rem 1.2rem;
+    transition: box-shadow 0.1s;
+    transition: color 0.1s;
+    width: 150px;
+    margin-bottom: 30px;
+    transition: box-shadow 0.1s;
+}
+
+.lineButton:hover {
+    cursor: pointer;
+}
+
+.button_line_active {
+    box-shadow: 5px 5px #002056;
+}
+
+/* footer */
+.foot {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+}
+.slider {
+    text-align: right;
+    padding-right: 1rem;
+}
+.slider > svg {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    color: #D7CACA;
+    transition: color 0.2s;
+}
+.slider > svg:hover {
+    color: #82b1ff;
+}

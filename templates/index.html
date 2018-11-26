@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link href='../static/css/fonts.css' rel="stylesheet">
+	<link href="../static/css/vuetify.min.css" rel="stylesheet">
+	<link href="../static/css/main.css" rel="stylesheet">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+
+<body>
+	<div id="app">
+		<v-app>
+			<v-content>
+				<v-container fluid>
+					<v-layout align-center justify-space-around row fill-height font-weight-bold headline>
+						<div class="button" :class="{button_active: mode === 'control'}" @click="changeMod('control')">Control</div>
+						<div class="button" :class="{button_active: mode === 'line'}" @click="changeMod('line')">Follow The Line</div>
+						<div class="button" :class="{button_active: mode === 'sumo'}" @click="changeMod('sumo')">Sumo</div>
+						<div class="button" :class="{button_active: mode === 'standby'}" @click="standBy()">Stand By</div>
+					</v-layout>
+					<div class="control" v-if="mode === 'control'">
+						<div class="middle_box" :class="{sitting: pressed_keys.forwardRight || pressed_keys.forwardLeft || pressed_keys.backRight || pressed_keys.backLeft}">
+							<div class="sub_box first_box" :class="{active_dir: pressed_keys.forward || pressed_keys.forwardRight}">
+								<svg v-if="!pressed_keys.turbo || pressed_keys.turbo && pressed_keys.back" aria-hidden="true" data-prefix="fas" data-icon="angle-up" class="svg-inline--fa fa-angle-up fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"></path></svg>
+								<svg v-if="pressed_keys.turbo && pressed_keys.forward" aria-hidden="true" data-prefix="fas" data-icon="angle-double-up" class="svg-inline--fa fa-angle-double-up fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M177 255.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 351.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 425.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1zm-34-192L7 199.7c-9.4 9.4-9.4 24.6 0 33.9l22.6 22.6c9.4 9.4 24.6 9.4 33.9 0l96.4-96.4 96.4 96.4c9.4 9.4 24.6 9.4 33.9 0l22.6-22.6c9.4-9.4 9.4-24.6 0-33.9l-136-136c-9.2-9.4-24.4-9.4-33.8 0z"></path></svg>
+							</div>
+							<div class="sub_box second_box" :class="{active_dir: pressed_keys.right || pressed_keys.backRight}"> 
+								<svg aria-hidden="true" data-prefix="fas" data-icon="angle-up" class="svg-inline--fa fa-angle-up fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"></path></svg>
+								<!-- <svg v-if="pressed_keys.turbo" aria-hidden="true" data-prefix="fas" data-icon="angle-double-up" class="svg-inline--fa fa-angle-double-up fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M177 255.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 351.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 425.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1zm-34-192L7 199.7c-9.4 9.4-9.4 24.6 0 33.9l22.6 22.6c9.4 9.4 24.6 9.4 33.9 0l96.4-96.4 96.4 96.4c9.4 9.4 24.6 9.4 33.9 0l22.6-22.6c9.4-9.4 9.4-24.6 0-33.9l-136-136c-9.2-9.4-24.4-9.4-33.8 0z"></path></svg> -->
+							</div>
+							<div class="sub_box third_box" :class="{active_dir: pressed_keys.left || pressed_keys.forwardLeft}">
+								<svg aria-hidden="true" data-prefix="fas" data-icon="angle-up" class="svg-inline--fa fa-angle-up fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"></path></svg>
+								<!-- <svg v-if="pressed_keys.turbo" aria-hidden="true" data-prefix="fas" data-icon="angle-double-up" class="svg-inline--fa fa-angle-double-up fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M177 255.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 351.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 425.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1zm-34-192L7 199.7c-9.4 9.4-9.4 24.6 0 33.9l22.6 22.6c9.4 9.4 24.6 9.4 33.9 0l96.4-96.4 96.4 96.4c9.4 9.4 24.6 9.4 33.9 0l22.6-22.6c9.4-9.4 9.4-24.6 0-33.9l-136-136c-9.2-9.4-24.4-9.4-33.8 0z"></path></svg> -->
+							</div>
+							<div class="sub_box fourth_box" :class="{active_dir: pressed_keys.back || pressed_keys.backLeft}">
+								<svg v-if="!pressed_keys.turbo || pressed_keys.turbo && pressed_keys.forward" aria-hidden="true" data-prefix="fas" data-icon="angle-up" class="svg-inline--fa fa-angle-up fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M177 159.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 255.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 329.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1z"></path></svg>
+								<svg v-if="pressed_keys.turbo && pressed_keys.back" aria-hidden="true" data-prefix="fas" data-icon="angle-double-up" class="svg-inline--fa fa-angle-double-up fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M177 255.7l136 136c9.4 9.4 9.4 24.6 0 33.9l-22.6 22.6c-9.4 9.4-24.6 9.4-33.9 0L160 351.9l-96.4 96.4c-9.4 9.4-24.6 9.4-33.9 0L7 425.7c-9.4-9.4-9.4-24.6 0-33.9l136-136c9.4-9.5 24.6-9.5 34-.1zm-34-192L7 199.7c-9.4 9.4-9.4 24.6 0 33.9l22.6 22.6c9.4 9.4 24.6 9.4 33.9 0l96.4-96.4 96.4 96.4c9.4 9.4 24.6 9.4 33.9 0l22.6-22.6c9.4-9.4 9.4-24.6 0-33.9l-136-136c-9.2-9.4-24.4-9.4-33.8 0z"></path></svg>
+							</div>
+						</div>
+					</div>
+					<v-layout align-center justify-center column fill-height font-weight-bold headline class="lineFollow" v-if="mode === 'line'">
+						<div class="lineButton text-xs-center" :class="{button_line_active: line.mode === 'start'}" @click="lineChange('start')">Start</div>
+						<div class="lineButton text-xs-center" :class="{button_line_active: line.mode === 'stop'}" @click="lineChange('stop')">Stop</div>
+					</v-layout>
+					<div class="foot">
+						<div class="slider">
+							<svg @click="openDialog" aria-hidden="true" data-prefix="fas" data-icon="sliders-h" class="svg-inline--fa fa-sliders-h fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M496 384H160v-16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v16H16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h80v16c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16v-16h336c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm0-160h-80v-16c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v16H16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h336v16c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16v-16h80c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zm0-160H288V48c0-8.8-7.2-16-16-16h-32c-8.8 0-16 7.2-16 16v16H16C7.2 64 0 71.2 0 80v32c0 8.8 7.2 16 16 16h208v16c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16v-16h208c8.8 0 16-7.2 16-16V80c0-8.8-7.2-16-16-16z"></path></svg>
+						</div>
+					</div>
+					<v-dialog v-model="dialog" persistent>
+						<v-card>
+							<v-card-title class="headline">Change Settings</v-card-title>
+							<v-card-text>
+								<v-layout row wrap>
+									<v-flex xs12>
+										<v-subheader class="pl-0">forward speed</v-subheader>
+										<v-slider
+											v-model="options.forward_pwm"
+											thumb-label="always"
+										></v-slider>
+									</v-flex>
+									<v-flex xs12>
+										<v-subheader class="pl-0">back speed</v-subheader>
+										<v-slider
+											v-model="options.back_pwm"
+											thumb-label="always"
+										></v-slider>
+									</v-flex>
+									<v-flex xs6 px-2>
+										<v-subheader class="pl-0">turning side pwm</v-subheader>
+										<v-slider
+										v-model="options.turning_side_pwm"
+										thumb-label="always"
+										></v-slider>
+									</v-flex>
+									<v-flex xs6 px-2>
+										<v-subheader class="pl-0">turning oppsite side pwm</v-subheader>
+										<v-slider
+										v-model="options.opposite_pwm"
+										thumb-label="always"
+										></v-slider>
+									</v-flex>
+									<v-flex xs6 px-2>
+										<v-subheader class="pl-0">half turning side pwm</v-subheader>
+										<v-slider
+										v-model="options.halfTurningPwm"
+										thumb-label="always"
+										></v-slider>
+									</v-flex>
+									<v-flex xs6 px-2>
+										<v-subheader class="pl-0">half turning oppsite side pwm</v-subheader>
+										<v-slider
+										v-model="options.halfTurningPwmOpp"
+										thumb-label="always"
+										></v-slider>
+									</v-flex>
+									<v-flex xs12>
+										<v-subheader class="pl-0">turbo speed</v-subheader>
+										<v-slider
+											v-model="options.turbo_pwm"
+											thumb-label="always"
+										></v-slider>
+									</v-flex>
+								</v-layout>
+							</v-card-text>
+							<v-card-actions>
+								<v-spacer></v-spacer>
+								<v-btn color="grey lighten-3" @click.native="dialog = false">Cancel</v-btn>
+								<v-btn color="grey lighten-3" @click.native="saveOptions">Accept</v-btn>
+								<v-spacer></v-spacer>
+							</v-card-actions>
+						</v-card>
+					</v-dialog>
+				</v-container>
+			</v-content>
+		</v-app>
+	</div>
+
+	<script src="../static/js/vue.min.js"></script>
+	<script src="../static/js/vuetify.js"></script>
+	<script>
+		const keyCodes = [87, 65, 83, 68, 16, 32]
+		// W = 87, A = 65, S = 83, D = 68, Shift = 16, Space = 32
+		var direction = null
+		const setForTheDirection = new Set()
+		const passDirIntoVue = (direction, turboBoolean) => {
+			for (let dir in app.pressed_keys) {
+				app.pressed_keys[dir] = false
+			}
+			app.pressed_keys[direction] = true
+			app.pressed_keys.turbo = turboBoolean
+		}
+		const setDirection = () => {
+			const directionArray = []
+			setForTheDirection.forEach((val) => directionArray.push(val))
+			// console.log(directionArray)
+			if (directionArray.indexOf(32) !== -1) {
+				// console.log("stop")
+				passDirIntoVue("stop", false)
+			// } else if (directionArray.indexOf(68) !== -1 && directionArray.indexOf(87) !== -1 && directionArray.indexOf(16) !== -1) {
+			// 	// console.log("turbo-forward-right")
+			// 	passDirIntoVue("forwardRight", true)
+			// } else if (directionArray.indexOf(65) !== -1 && directionArray.indexOf(87) !== -1 && directionArray.indexOf(16) !== -1) {
+			// 	// console.log("turbo-forward-left")
+			// 	passDirIntoVue("forwardLeft", true)
+			// } else if (directionArray.indexOf(68) !== -1 && directionArray.indexOf(83) !== -1 && directionArray.indexOf(16) !== -1) {
+			// 	// console.log("turbo-back-right")
+			// 	passDirIntoVue("backRight", true)
+			// } else if (directionArray.indexOf(65) !== -1 && directionArray.indexOf(83) !== -1 && directionArray.indexOf(16) !== -1) {
+			// 	// console.log("turbo-back-left")
+			// 	passDirIntoVue("backLeft", true)
+			} else if (directionArray.indexOf(87) !== -1 && directionArray.indexOf(16) !== -1) {
+				// console.log("turbo-forward")
+				passDirIntoVue("forward", true)
+			} else if (directionArray.indexOf(83) !== -1 && directionArray.indexOf(16) !== -1) {
+				// console.log("turbo-back")
+				passDirIntoVue("back", true)
+			// } else if (directionArray.indexOf(68) !== -1 && directionArray.indexOf(16) !== -1) {
+			// 	// console.log("turbo-right")
+			// 	passDirIntoVue("right", true)
+			// } else if (directionArray.indexOf(65) !== -1 && directionArray.indexOf(16) !== -1) {
+			// 	// console.log("turbo-left")
+			// 	passDirIntoVue("left", true)
+			} else if (directionArray.indexOf(68) !== -1 && directionArray.indexOf(87) !== -1) {
+				// console.log("forward-right")
+				passDirIntoVue("forwardRight", false)
+			} else if (directionArray.indexOf(65) !== -1 && directionArray.indexOf(87) !== -1) {
+				// console.log("forward-left")
+				passDirIntoVue("forwardLeft", false)
+			} else if (directionArray.indexOf(83) !== -1 && directionArray.indexOf(68) !== -1) {
+				// console.log("back-right")
+				passDirIntoVue("backRight", false)
+			} else if (directionArray.indexOf(83) !== -1 && directionArray.indexOf(65) !== -1) {
+				// console.log("back-left")
+				passDirIntoVue("backLeft", false)
+			} else if (directionArray.indexOf(87) === 0) {
+				// console.log("forward")
+				passDirIntoVue("forward", false)
+			} else if (directionArray.indexOf(65) === 0) {
+				// console.log("left")
+				passDirIntoVue("left", false)
+			} else if (directionArray.indexOf(68) === 0) {
+				// console.log("right")
+				passDirIntoVue("right", false)
+			} else if (directionArray.indexOf(83) === 0) {
+				// console.log("back")
+				passDirIntoVue("back", false)
+			}
+		}
+		const app = new Vue({
+			el: '#app',
+			data() {
+				return {
+					mode: "standby",
+					pressed_keys: {
+						turbo: false,
+						stop: false,
+						forward: false,
+						right: false,
+						left: false,
+						back: false,
+						forwardRight: false,
+						forwardLeft: false,
+						backRight: false,
+						backLeft: false,						
+					},
+					line: {
+						mode: "stop"
+					},
+					dialog: false,
+					options: {
+						forward_pwm: 50,
+						back_pwm: 50,
+						turning_side_pwm: 50,
+						opposite_pwm: 75,
+						halfTurningPwm: 50,
+						halfTurningPwmOpp: 75,
+						turbo_pwm: 100,
+					},
+				}
+			},
+			methods: {
+				changeMod(mode) {
+					this.mode = mode
+					for (let dir in this.pressed_keys) {
+						this.pressed_keys[dir] = false
+					}
+					app.pressed_keys.stop = true
+				},
+				lineChange(mode) {
+					this.line.mode = mode
+				},
+				standBy() {
+					this.changeMod('standby')
+					for (let dir in this.pressed_keys) {
+						this.pressed_keys[dir] = false
+					}
+					app.pressed_keys.stop = true
+				},
+				openDialog() {
+					this.loadOptions()
+					this.dialog = true
+				},
+				async saveOptions() {
+					console.log("options saved")
+					const url = `${origin}/settings`
+					try {
+						const saveRequest = await fetch(url, {
+							method: "POST",
+							body: JSON.stringify(app.options)
+						})
+						console.log(saveRequest)
+						this.dialog = false
+					} catch (error) {
+						console.log("error")
+					}
+				},
+				async loadOptions() {
+					const url = `${origin}/settings`
+					try {
+						const settings = await fetch(url)
+						const data = await settings.json()
+						console.log(data)
+						for (p in data) {
+							this.options[p] = data[p]
+						}
+					} catch (error) {
+						console.log("error getting the settings")
+					}
+				},
+				async followTheLine(toFollowOrNot) {
+					const url = `${origin}/follow/`
+					try {
+						await fetch(`${url}${toFollowOrNot}`)
+						console.log(toFollowOrNot)
+					} catch (error) {
+						console.log("error following the line", error)
+					}
+				}
+			},
+			watch: {
+				pressed_keys: {
+					deep: true,
+					async handler(val) {
+						var dir;
+						for (k in val) {
+							console.log("ks", k)
+							console.log(val[k])
+							if (k !== "turbo" && val[k] === true) {
+								dir = k
+							}
+						}
+						console.log("dir :", dir)
+						console.log(dir, val.turbo)
+						const origin = location.origin
+						const url = `${origin}/pimove/`
+						await fetch(`${url}${dir}_${val.turbo}`)
+							.then((res) => {
+								console.log("response ", res)
+							}).catch(err => console.log("err :", err))
+					}
+				},
+				line: {
+					deep: true,
+					handler(val) {
+						this.followTheLine(val.mode)
+						console.log("line modes :", val)
+					}
+				}
+			},
+			created() {
+				window.addEventListener('keydown', ({keyCode}) => {
+					if (this.mode === "control") {
+						if (keyCodes.indexOf(keyCode) !== -1) {
+							if (setForTheDirection.has(87) && keyCode === 83 || setForTheDirection.has(83) && keyCode === 87 || setForTheDirection.has(65) && keyCode === 68 || setForTheDirection.has(68) && keyCode === 65) {
+								
+							} else {
+
+								setForTheDirection.add(keyCode)
+								setDirection()
+
+							}
+						}
+					}
+				});
+				
+				window.addEventListener('keyup', ({keyCode}) => {
+					if (this.mode === "control") {
+						if (keyCodes.indexOf(keyCode) !== -1) {
+							setForTheDirection.delete(keyCode)
+							setDirection()
+						}
+					}
+				})
+			}
+		})
+
+	</script>
+</body>
+</html>
