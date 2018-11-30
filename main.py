@@ -56,43 +56,25 @@ leftOut  = GPIO.PWM(pwmLeft, 100) ### 100Hz
 motorRight = (ain2, ain1)
 motorLeft = (bin2, bin1)
 
+def stp():
+    #raise Exception()
+    rightOut.stop()
+    leftOut.stop()
 
-############################### DEFINE LINE FOLLOWING LOGIC ################################
-### light sensor is 1 when reflecting off white, 0 when reflecting from black (d = 1mm) # TODO: Test longer distances
-
-### GO FORWARD
-### l1 l2 l3 l4
-###  1  0  0  1
-
-### GO LEFT
-### l1 l2 l3 l4
-###  0  ?  1  1
-
-### GO RIGHT
-### l1 l2 l3 l4
-###  1  1  ?  0
-
-def lineFollowing():
+def lineFollowing(shouldStop = False):
     try:
         rightOut.start(0)
         leftOut.start(0)
         speed = 60
-        #moveForward(motorRight, rightOut, GPIO, speed)
-        #moveForward(motorLeft, leftOut, GPIO, speed)
-        print("Start moving forward")
-        while True:
+        while not shouldStop:
                 l1 = readLightSensor(light1, GPIO)
                 l2 = readLightSensor(light2, GPIO)
                 l3 = readLightSensor(light3, GPIO)
                 l4 = readLightSensor(light4, GPIO)
                 if l2 == 1 and l1 == 0:
                     turnRight(rightOut, 60) ### this will turn harder and harder until it recognises something as a straight line
-                    print("Turn right")
-                #    moveForward(motorRight, rightOut, GPIO, speed)
                 if l4 == 0 and l3 == 1:
                     turnLeft(leftOut, 60)
-                    print("Turn left")
-                #    moveForward(motorLeft, leftOut, GPIO, speed)
                 if l1 == 1 and l2 == 1 and l3 == 1 and l4 == 1:
                     moveForward(motorRight, rightOut, GPIO, speed)
                     moveForward(motorLeft, leftOut, GPIO, speed)
@@ -103,8 +85,6 @@ def lineFollowing():
                 #    """
                     moveForward(motorRight, rightOut, GPIO, speed)
                     moveForward(motorLeft, leftOut, GPIO, speed)
-                    print("Forward")
-                #print("Idk wtf is going on")
     except Exception as exc:
         print(exc)
         stop(motorLeft, leftOut, GPIO)
@@ -116,34 +96,26 @@ def takeOut():
         try:
             rightOut.start(0)
             leftOut.start(0)
-            speed = 60
+            speed = 50
             while True:
                 l1 = readLightSensor(light1, GPIO)
-                l2 = readLightSensor(light2, GPIO)
-                l3 = readLightSensor(light3, GPIO)
                 l4 = readLightSensor(light4, GPIO)
-                #moveForward(motorRight, rightOut, GPIO, speed)
-                #moveBackward(motorLeft, leftOut, GPIO, speed)
-                print(readSonicSensor(sonicSensorTrigger, echoPin, GPIO))
                 if (l1, l4) == (0, 0): ## or whatever the value of white was
+                    print(l1, l4)
                     if readSonicSensor(sonicSensorTrigger, echoPin, GPIO) < 100.0: ###or whatever the radius/longest possible distance was
-                        # moveForward(motorLeft, leftOut, GPIO, speed)
-                        # moveBackward(motorRight, rightOut, GPIO, speed)
-                        # t.sleep(0.001)
-                        stop(motorRight, rightOut, GPIO)
-                        stop(motorLeft, leftOut, GPIO)
-                        t.sleep(0.3)
                         moveForward(motorRight, rightOut, GPIO, speed)
                         moveForward(motorLeft, leftOut, GPIO, speed)
+                        if readSonicSensor(sonicSensorTrigger, echoPin, GPIO) < 5:
+                            t.sleep(0.1) ### IDK why, but this makes it work
                     else:
                         moveBackward(motorRight, rightOut, GPIO, speed)
                         moveForward(motorLeft, leftOut, GPIO, speed)
                 else:
                     moveBackward(motorRight, rightOut, GPIO, speed)
                     moveBackward(motorLeft, leftOut, GPIO, speed)
-                    t.sleep(0.2)
+                    t.sleep(0.3)
                     moveForward(motorLeft, leftOut, GPIO, speed)
-                    t.sleep(0.1)
+                    t.sleep(0.2)
         except Exception as exc:
             print(exc)
             stop(motorRight, rightOut, GPIO)

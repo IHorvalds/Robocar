@@ -1,1 +1,1 @@
-{"forward_pwm": 73, "back_pwm": 59, "turning_side_pwm": 50, "opposite_pwm": 75, "halfTurningPwm": 50, "halfTurningPwmOpp": 75, "turbo_pwm": 91}
+{"forward_pwm": 51, "opposite_pwm": 65, "halfTurningPwmOpp": 75, "back_pwm": 50, "halfTurningPwm": 55, "turbo_pwm": 100, "turning_side_pwm": 41}

@@ -71,7 +71,7 @@ def followTheLine(follow):
     elif follow == "stop":
         print("stop")
         #call the stop
-        move.stop()
+        main.stp()      
     return "yoo"
 
 app.run(host="0.0.0.0")

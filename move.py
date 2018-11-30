@@ -45,7 +45,7 @@ leftside = GPIO.PWM(left_pwm, 50)
 leftside.start(0)
 
 # =========== rightside =========== 
-right_pwm = 13 #right pwm
+right_pwm = 17#right pwm
 right_output_1 = 6 #rightside output 1
 right_output_2 = 5 #rightside output 2
 
@@ -64,34 +64,34 @@ def control(left_1, right_1, left_2, right_2, left_dutycycle, right_dutycycle):
     rightside.ChangeDutyCycle(right_dutycycle) #changing the dutycycle of the right side
 
 def fast_forward():
-    control(GPIO.HIGH, GPIO.HIGH, GPIO.LOW, GPIO.LOW, turbo_pwm, turbo_pwm)
-    print("fast-forward")
-def fast_back(): 
     control(GPIO.LOW, GPIO.LOW, GPIO.HIGH, GPIO.HIGH, turbo_pwm, turbo_pwm)
     print("fast-forward")
+def fast_back(): 
+    control(GPIO.HIGH, GPIO.HIGH, GPIO.LOW, GPIO.LOW, turbo_pwm, turbo_pwm)
+    print("fast-back")
 def forward():
-    control(GPIO.HIGH, GPIO.HIGH, GPIO.LOW, GPIO.LOW, forward_pwm, forward_pwm)
+    control(GPIO.LOW, GPIO.LOW, GPIO.HIGH, GPIO.HIGH, forward_pwm, forward_pwm)
     print("forward")
 def back():
-    control(GPIO.LOW, GPIO.LOW, GPIO.HIGH, GPIO.HIGH, back_pwm, back_pwm)
+    control(GPIO.HIGH, GPIO.HIGH, GPIO.LOW, GPIO.LOW, back_pwm, back_pwm)
     print("back")
 def right():
     print("right")
-    control(GPIO.HIGH, GPIO.HIGH, GPIO.LOW, GPIO.LOW, opposite_pwm, turning_side_pwm)
+    control(GPIO.LOW, GPIO.LOW, GPIO.HIGH, GPIO.HiGH, opposite_pwm, turning_side_pwm)
 def left():
     print("left")
-    control(GPIO.HIGH, GPIO.HIGH, GPIO.LOW, GPIO.LOW, turning_side_pwm, opposite_pwm)
+    control(GPIO.LOW, GPIO.LOW, GPIO.HIGH, GPIO.HIGH, turning_side_pwm, opposite_pwm)
 def forward_right():
-    control(GPIO.HIGH, GPIO.HIGH, GPIO.LOW, GPIO.LOW, halfTurningPwmOpp, halfTurningPwm)
+    control(GPIO.LOW, GPIO.LOW, GPIO.HIGH, GPIO.HIGH, halfTurningPwmOpp, halfTurningPwm)
     print("forward-right")
 def forward_left():
-    control(GPIO.HIGH, GPIO.HIGH, GPIO.LOW, GPIO.LOW, halfTurningPwm, halfTurningPwmOpp)
+    control(GPIO.LOW, GPIO.LOW, GPIO.HIGH, GPIO.HIGH, halfTurningPwm, halfTurningPwmOpp)
     print("forward-left")
 def back_right():
-    control(GPIO.LOW, GPIO.LOW, GPIO.HIGH, GPIO.HIGH, halfTurningPwmOpp, halfTurningPwm)
+    control(GPIO.HIGH, GPIO.HIGH, GPIO.LOW, GPIO.LOW, halfTurningPwmOpp, halfTurningPwm)
     print("back-right")
 def back_left():
-    control(GPIO.LOW, GPIO.LOW, GPIO.HIGH, GPIO.HIGH, halfTurningPwm, halfTurningPwmOpp)
+    control(GPIO.HIGH, GPIO.HIGH, GPIO.LOW, GPIO.LOW, halfTurningPwm, halfTurningPwmOpp)
     print("back-left")
 def stop():
     print("stop")
