@@ -74,4 +74,16 @@ def followTheLine(follow):
         main.stp()      
     return "yoo"
 
+@app.route("/sumo/<sumo>")
+def sumo(follow):
+    if follow == "start":
+        print("start")
+        #call the start
+        main.takeOut()
+    elif follow == "stop":
+        print("stop")
+        #call the stop
+        move.stop()
+    return "yoo"
+
 app.run(host="0.0.0.0")

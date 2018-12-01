@@ -86,9 +86,6 @@
 }
 
 /* follow the line */
-.lineFollow {
-    height: 300px
-}
 
 .lineButton {
     background-color: #D7CACA;
@@ -96,8 +93,13 @@
     transition: box-shadow 0.1s;
     transition: color 0.1s;
     width: 150px;
-    margin-bottom: 30px;
     transition: box-shadow 0.1s;
+    margin-top: 30px;
+}
+
+.lineFollow > img, .sumo > img {
+    margin-top: 30px;
+    width: 100%;
 }
 
 .lineButton:hover {
@@ -107,6 +109,8 @@
 .button_line_active {
     box-shadow: 5px 5px #002056;
 }
+
+
 
 /* footer */
 .foot {

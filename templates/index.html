@@ -42,6 +42,12 @@
 					<v-layout align-center justify-center column fill-height font-weight-bold headline class="lineFollow" v-if="mode === 'line'">
 						<div class="lineButton text-xs-center" :class="{button_line_active: line.mode === 'start'}" @click="lineChange('start')">Start</div>
 						<div class="lineButton text-xs-center" :class="{button_line_active: line.mode === 'stop'}" @click="lineChange('stop')">Stop</div>
+						<img v-if="line.mode === 'start'" src="../static/css/cat.gif" alt="cat gif">
+					</v-layout>
+					<v-layout align-center justify-center column fill-height font-weight-bold headline class="sumo" v-if="mode === 'sumo'">
+						<div class="lineButton text-xs-center" :class="{button_line_active: sumo.mode === 'start'}" @click="sumoChange('start')">Start</div>
+						<div class="lineButton text-xs-center" :class="{button_line_active: sumo.mode === 'stop'}" @click="sumoChange('stop')">Stop</div>
+						<img v-if="sumo.mode === 'start'" src="../static/css/cat.gif" alt="cat gif">
 					</v-layout>
 					<div class="foot">
 						<div class="slider">
@@ -208,6 +214,9 @@
 					line: {
 						mode: "stop"
 					},
+					sumo: {
+						mode: "stop"
+					},
 					dialog: false,
 					options: {
 						forward_pwm: 50,
@@ -231,12 +240,17 @@
 				lineChange(mode) {
 					this.line.mode = mode
 				},
+				sumoChange(mode) {
+					this.sumo.mode = mode
+				},
 				standBy() {
 					this.changeMod('standby')
 					for (let dir in this.pressed_keys) {
 						this.pressed_keys[dir] = false
 					}
 					app.pressed_keys.stop = true
+					this.line.mode = "stop"
+					this.sumo.mode = "stop"
 				},
 				openDialog() {
 					this.loadOptions()
@@ -277,6 +291,15 @@
 					} catch (error) {
 						console.log("error following the line", error)
 					}
+				},
+				async sumoBox(toSumoOrNot) {
+					const url = `${origin}/sumo/`
+					try {
+						await fetch(`${url}${toSumoOrNot}`)
+						console.log(toSumoOrNot)
+					} catch (error) {
+						console.log("error following the line", error)
+					}
 				}
 			},
 			watch: {
@@ -305,6 +328,13 @@
 					deep: true,
 					handler(val) {
 						this.followTheLine(val.mode)
+						console.log("line modes :", val)
+					}
+				},
+				sumo: {
+					deep: true,
+					handler(val) {
+						this.sumoBox(val.mode)
 						console.log("line modes :", val)
 					}
 				}
